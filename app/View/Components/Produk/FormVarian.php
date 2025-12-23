@@ -23,7 +23,7 @@ class FormVarian extends Component
             $this->stok_varian = $varian->stok_varian;
             $this->action = route('master-data.varian-produk.update', $varian->id);
         } else{
-            route('master-data.varian-produk.store');
+           $this->action = route('master-data.varian-produk.store');
         }
     }
 

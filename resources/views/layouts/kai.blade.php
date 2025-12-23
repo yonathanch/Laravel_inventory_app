@@ -6,7 +6,7 @@
     <title>{{ env('APP_NAME') }}</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
     <link rel="icon" href="{{ asset('template') }}/assets/img/kaiadmin/favicon.ico" type="image/x-icon" />
-
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <!-- Fonts and icons -->
     <script src="{{ asset('template') }}/assets/js/plugin/webfont/webfont.min.js"></script>
     <script>
@@ -201,6 +201,7 @@
 
     <!-- Kaiadmin JS -->
     <script src="{{ asset('template') }}/assets/js/kaiadmin.min.js"></script>
+    @stack('script')
 </body>
 
 </html>

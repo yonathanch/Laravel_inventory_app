@@ -3,9 +3,7 @@
         <div class="modal-dialog">
             <form method="POST" enctype="multipart/form-data" action="{{ $action }}">
                 @csrf
-                @if ($id)
-                    @method('PUT')
-                @endif
+                <input type="hidden" name="produk_id" id="produk_id" value="{{ $produk_id ?? '' }}">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="modalFormVarianLabel">Form Varian</h1>

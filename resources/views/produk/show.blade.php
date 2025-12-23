@@ -13,7 +13,7 @@
             <div class="mt-2">
                 <div class="d-flex justify-content-end">
                     <button type="button" class="btn btn-dark btn-sm btn-round" data-bs-toggle="modal"
-                        data-bs-target="#modalFormVarian">
+                        data-bs-target="#modalFormVarian" id="btnTambahVarian">
                         Tambah Varian
                     </button>
                 </div>
@@ -29,3 +29,61 @@
     </div>
     <x-produk.form-varian />
 @endsection
+@push('script')
+    <script>
+        $(document).ready(function() {
+            let modalEl = $('#modalFormVarian');
+            let modal = new bootstrap.Modal(modalEl);
+            let $form = $('#modalFormVarian form')
+
+            $('#btnTambahVarian').on('click', function() {
+                $form[0].reset();
+                $form.attr('action');
+                $form.find('small.text-danger').text('');
+                $('#modalFormVarian .modal-title').text('Tambah Varian Baru');
+                modal.show();
+            });
+
+            $form.submit(function(e) {
+                e.preventDefault();
+                let formData = new FormData(this)
+
+                $.ajax({
+                    type: $form.attr('method'),
+                    url: $form.attr('action'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        //sweet alert
+                        swal({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: response.message,
+                            timer: 2000,
+                            buttons: {
+                                confirm: {
+                                    text: "OK",
+                                    className: "btn btn-secondary"
+                                }
+                            }
+                        }).then(() => {
+                            modal.hide();
+                            location.reload();
+                        })
+                    },
+                    error: function(xhr) {
+                        let errors = xhr.responseJSON.errors;
+                        console.log(errors);
+
+                        $form.find('small.text-danger').text('');
+                        $.each(errors, function(key, val) {
+                            $form.find('[name="' + key + '"]').next('small.text-danger')
+                                .text(val[0]);
+                        })
+                    }
+                });
+            })
+        });
+    </script>
+@endpush
