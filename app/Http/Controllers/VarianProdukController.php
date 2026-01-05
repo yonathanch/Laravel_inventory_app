@@ -6,6 +6,7 @@ use App\Models\VarianProduk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\storeVarianProdukRequest;
+use App\Http\Requests\updateVarianProdukRequest;
 
 class VarianProdukController extends Controller
 {
@@ -26,5 +27,39 @@ class VarianProdukController extends Controller
         return response()->json([
             'message' => 'Data berhasil disimpan'
         ]);
+    }
+
+    public function update(updateVarianProdukRequest $request, $varian_produk)
+    {
+        $varian = VarianProduk::findOrFail($varian_produk);
+        $fileName = $varian->gambar_varian;
+
+        if ($request->file('gambar_varian')) {
+            Storage::disk('public')->delete('varian-produk/'.$varian->gambar_varian);
+            $fileName = time() . '.' . $request->file('gambar_varian')->getClientOriginalExtension();
+            Storage::disk('public')->putFileAs('varian-produk', $request->file('gambar_varian'), $fileName);
+        }
+
+        $varian->update([
+            'nama_varian' => $request->nama_varian,
+            'harga_varian' => $request->harga_varian,
+            'stok_varian' => $request->stok_varian,
+            'gambar_varian' => $fileName
+        ]);
+
+        return response()->json([
+            'message' => 'Data berhasil di update'
+        ]);
+    }
+
+    public function destroy($varian_produk)
+    {
+        $varian = VarianProduk::findOrFail($varian_produk);
+        Storage::disk('public')->delete('varian-produk/' . $varian->gambar_varian);
+        $varian->delete();
+
+        toast()->success('Data berhasil dihapus');
+
+        return redirect()->route('master-data.produk.show', $varian->produk_id);
     }
 }

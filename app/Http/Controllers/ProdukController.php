@@ -21,6 +21,7 @@ class ProdukController extends Controller
             $query->where('nama_produk', 'like', '%' . $search . '%');
         }
 
+        //tamilkan data kategori ambil kolom id dan nama kategori
         $query->with('kategori:id,nama_kategori');
         $produk = $query->orderBy('created_at', 'DESC')->paginate($perPage)->appends(request()->query());
         confirmDelete('Hapus produk akan menghapus semua varian, Anda Yakin?');

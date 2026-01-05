@@ -18,11 +18,18 @@
                     </button>
                 </div>
                 <div class="row mt-2">
-                    <div class="col-12">
-                        <div class="alert alert-info" style="box-shadow: none;">
-                            <span>Belum ada variant produk, silahkan tambahkan variant terlebih dahulu</span>
+                    @forelse ($produk->varian as $item)
+                        <div class="col-6 col-md-4">
+                            <x-produk.card-varian :varian="$item" />
                         </div>
-                    </div>
+                    @empty
+                        <div class="col-12">
+                            <div class="alert alert-info" style="box-shadow: none;">
+                                <span>Belum ada variant produk, silahkan tambahkan variant terlebih dahulu</span>
+                            </div>
+                        </div>
+                    @endforelse
+
                 </div>
             </div>
         </div>
@@ -32,10 +39,12 @@
 @push('script')
     <script>
         $(document).ready(function() {
+            console.log('SCRIPT JALAN');
             let modalEl = $('#modalFormVarian');
             let modal = new bootstrap.Modal(modalEl);
             let $form = $('#modalFormVarian form')
-
+            //bsa tampilkan modal karna bermain di dom ga peduli button tidak ada id modalFormVarian 
+            // karna mengikuti dom:  <x-produk.form-varian
             $('#btnTambahVarian').on('click', function() {
                 $form[0].reset();
                 $form.attr('action');
@@ -43,6 +52,27 @@
                 $('#modalFormVarian .modal-title').text('Tambah Varian Baru');
                 modal.show();
             });
+
+            $(".btnEditVarian").on('click', function() {
+                let nama_varian = $(this).data('nama-varian');
+                let harga_varian = $(this).data('harga-varian');
+                let stok_varian = $(this).data('stok-varian');
+                let action = $(this).data('action');
+
+                $form[0].reset();
+                $form.attr('action', action);
+
+                $form.append('<input type="hidden" name="_method" value="PUT">');
+
+                $form.find('input[name="nama_varian"]').val(nama_varian);
+                $form.find('input[name="harga_varian"]').val(harga_varian);
+                $form.find('input[name="stok_varian"]').val(stok_varian);
+                $form.find('small.text-danger').text('');
+                $('#modalFormVarian .modal-title').text('Edit Varian');
+                modal.show();
+            });
+
+
 
             $form.submit(function(e) {
                 e.preventDefault();
@@ -84,6 +114,42 @@
                     }
                 });
             })
+
+            $(".formDeleteVarian").on('click', function(e) {
+                e.preventDefault();
+                const form = this;
+                swal({
+                    title: 'Hapus Data Apakah anda yakin ?',
+                    text: 'Anda tidak dapat mengembalikan data ini!',
+                    icon: 'warning',
+                    buttons: true,
+                    dangerMode: true,
+                }).then((isConfirm) => {
+                    if (isConfirm) {
+                        form.submit();
+                    }
+                })
+            });
         });
     </script>
+@endpush
+
+{{-- mengatur label pada meta item agar responsif --}}
+@push('style')
+    <style>
+        .meta-label {
+            width: 100px;
+            white-space: nowrap;
+        }
+
+        .meta-value {
+            white-space: nowrap;
+        }
+
+        @media (min-width: 768px) {
+            .meta-label {
+                width: 150px;
+            }
+        }
+    </style>
 @endpush

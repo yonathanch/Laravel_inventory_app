@@ -11,11 +11,13 @@ class MetaItem extends Component
     /**
      * Create a new component instance.
      */
-    public $label, $value;
-    public function __construct($label, $value)
+    //class = '' karna supaya jika kita tidak menggunakan komponen class maka ga error
+    public $label, $value, $class;
+    public function __construct($label, $value, $class = '')
     {
         $this->label = $label;
         $this->value = $value;
+        $this->class = $class;
     }
 
     /**
