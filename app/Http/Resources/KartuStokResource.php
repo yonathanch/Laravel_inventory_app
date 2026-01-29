@@ -15,7 +15,7 @@ class KartuStokResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $tanggal = Carbon::parse($this->created_at)->locale('id')->translateFormat('l, d F Y');
+        $tanggal = Carbon::parse($this->created_at)->locale('id')->translatedFormat('l, d F Y');
         return[
             'nomor_transaksi' => $this->nomor_transaksi,
             'jenis_transaksi' => $this->jenis_transaksi,

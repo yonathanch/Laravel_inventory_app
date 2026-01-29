@@ -38,7 +38,7 @@ class StokBarangController extends Controller
             });
         }
 
-        //memakai get collectio karna ingin gabungkan nama produk dan nama varian contoh : ransel 45 l
+        //memakai get collection karna ingin gabungkan nama produk dan nama varian contoh : ransel 45 l
         $paginator = $query->paginate($perPage)->appends(request()->query());
         $produk = $paginator->getCollection()->map(function($q){
             return[

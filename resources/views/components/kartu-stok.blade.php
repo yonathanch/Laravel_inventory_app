@@ -29,8 +29,8 @@
                         </tr>
                     </thead>
                     <tbody></tbody>
-                    <div id="pagination-kartu-stok" class="mt-3"></div>
                 </table>
+                <div id="pagination-kartu-stok" class="mt-3"></div>
             </div>
         </div>
     </div>
@@ -39,6 +39,21 @@
 @push('script')
     <script>
         $(document).ready(function() {
+            let currentNomorSku = null;
+
+            //global scope untuk note memberikan warna berdsaarkan jenis transaksi
+            function transaksiColor(value) {
+                switch (value) {
+                    case 'in':
+                        return 'bg-success';
+                    case 'out':
+                        return 'bg-danger';
+                    case 'adjustment':
+                        return 'bg-secondary';
+                    default:
+                        return 'bg-warning';
+                }
+            }
 
             function loadKartuStok(nomorSku, pageUrl = null) {
                 const url = pageUrl || `/kartu-stok/${nomorSku}`;
@@ -64,8 +79,12 @@
                             <tr>
                                 <td>${index + 1}</td>
                                 <td>${item.tanggal}</td>
-                                <td>${item.nomor_transaksi}</td>
-                                <td>${item.jenis_transaksi}</td>
+                                <td>${item.nomor_transaksi ?? '-'}</td>
+                                <td>
+                                    <span class="badge ${transaksiColor(item.jenis_transaksi)} fw-bold text-uppercase">
+                                        ${item.jenis_transaksi}
+                                    </span>
+                                </td>
                                 <td>${item.jumlah_keluar ?? '-'}</td>
                                 <td>${item.jumlah_masuk ?? '-'}</td>
                                 <td>${item.stok_akhir}</td>
@@ -74,14 +93,44 @@
                         `)
                         })
 
+                        if (response.meta.total > response.meta.per_page) {
+                            const meta = response.meta;
+
+                            let paginationHtml =
+                                '<nav><ul class="pagination justify-content-center gap-1">'
+                            meta.links.forEach(link => {
+                                //untuk menghilangkan previus dan next
+                                const isNumber = /^\d+$/.test(link.label);
+                                if (!isNumber) return;
+
+                                paginationHtml += `
+                                        <li class="page-item">
+                                            <a class="page-link ${link.active ? 'bg-dark text-white' : ''}" href="${link.url}">
+                                                ${link.label}
+                                            </a>
+                                        </li>                                    
+                                    `
+                            });
+                            paginationHtml += '</ul></nav>';
+                            $pagination.html(paginationHtml);
+                        }
                     }
                 });
             }
 
             //handle button modal di click
             $(document).on("click", ".btn-kartu-stok", function() {
-                let currentNomorSku = $(this).data("nomor-sku");
+                currentNomorSku = $(this).data("nomor-sku");
                 loadKartuStok(currentNomorSku);
+            });
+
+            $(document).on('click', '#pagination-kartu-stok a.page-link', function(e) {
+                e.preventDefault();
+
+                const pageUrl = $(this).attr('href');
+                if (pageUrl && currentNomorSku) {
+                    loadKartuStok(currentNomorSku, pageUrl);
+                }
             });
         });
     </script>

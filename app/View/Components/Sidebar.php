@@ -43,7 +43,30 @@ class Sidebar extends Component
                     ],
                 ]
             ],
-
+            [
+                'label' => 'Transaksi Masuk',
+                'route' => '#',
+                'is_active' => request()->routeIs('transaksi-masuk.*'),
+                'icon' => 'fas fa-exchange-alt',
+                'is_dropdown' => true,
+                'items' => [
+                    [
+                        'label' => 'Transaksi Baru',
+                        'route' => 'transaksi-masuk.create'
+                    ],
+                    [
+                        'label' => 'Data Transaksi',
+                        'route' => 'transaksi-masuk.index'
+                    ],
+                ]
+            ],
+            [
+                'label' => 'Laporan Kenaikan Harga',
+                'route' => 'laporan-kenaikan-harga.index',
+                'is_active' => request()->routeIs('laporan-kenaikan-harga.*'),
+                'icon' => ' fas fa-chart-line',
+                'is_dropdown' => false
+            ],
         ];
     }
 

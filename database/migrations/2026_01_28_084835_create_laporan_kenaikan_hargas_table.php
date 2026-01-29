@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kartu_stoks', function (Blueprint $table) {
+        Schema::create('laporan_kenaikan_hargas', function (Blueprint $table) {
             $table->id();
-            $table->string('nomor_transaksi')->nullable();
-            $table->enum('jenis_transaksi', ['in', 'out', 'adjustment', 'return']);
+            $table->string('nomor_transaksi');
+            $table->string('nomor_batch');
             $table->string('nomor_sku');
-            $table->integer('jumlah_masuk')->nullable();
-            $table->integer('jumlah_keluar')->nullable();
-            $table->integer('stok_akhir');
-            $table->string('petugas');
+            $table->integer('harga_lama');
+            $table->integer('harga_beli');
+            $table->integer('kenaikan_harga');
+            $table->integer('jumlah_barang');
+            $table->boolean('is_confirmed')->default(false);
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kartu_stoks');
+        Schema::dropIfExists('laporan_kenaikan_hargas');
     }
 };
