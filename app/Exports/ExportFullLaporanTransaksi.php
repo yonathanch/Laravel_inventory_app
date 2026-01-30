@@ -35,8 +35,10 @@ class ExportFullLaporanTransaksi implements FromCollection, WithHeadings, WithCu
             $result[] = [
                 'No' => $index + 1,
                 'Tanggal Transaksi' => Carbon::parse($item->created_at)->locale('id')->translatedFormat('l, d F Y'),
+                 //full export berbeda mengambil data nya ada yg harus mengambil lewat relasi transaksi dahulu karna di controller kita mengambil data awalnya memakai transaksiItems dan pd controller kita sudah ambil data relasi dari transaksi
                 'Nomor Transaksi' => $item->transaksi->nomor_transaksi,
-                'Pengirim' => $item->transaksi->pengirim,
+                 //supaya dinamis exportnya kita ubah menjadi:
+                $this->jenisTransaksi == 'pemasukan' ? 'pengirim' : 'penerima' => $this->jenisTransaksi == 'pemasukan' ? $item->transaksi->pengirim : $item->transaksi->penerima,
                 'Kontak' => $item->transaksi->kontak,
                 'Produk' => $item->produk,
                 'Varian' => $item->varian,
@@ -55,7 +57,8 @@ class ExportFullLaporanTransaksi implements FromCollection, WithHeadings, WithCu
             'No',
             'Tanggal Transaksi',
             'Nomor Transaksi',
-            'Pengirim',
+            //disini juga diubah supaya dinamis
+            $this->jenisTransaksi == 'pemasukan' ? 'Pengirim' : 'Penerima',
             'Kontak',
             'Produk',
             'Varian',

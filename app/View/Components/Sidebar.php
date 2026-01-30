@@ -47,7 +47,7 @@ class Sidebar extends Component
                 'label' => 'Transaksi Masuk',
                 'route' => '#',
                 'is_active' => request()->routeIs('transaksi-masuk.*'),
-                'icon' => 'fas fa-exchange-alt',
+                'icon' => 'fas fa-angle-double-right',
                 'is_dropdown' => true,
                 'items' => [
                     [
@@ -57,6 +57,23 @@ class Sidebar extends Component
                     [
                         'label' => 'Data Transaksi',
                         'route' => 'transaksi-masuk.index'
+                    ],
+                ]
+            ],
+            [
+                'label' => 'Transaksi Keluar',
+                'route' => '#',
+                'is_active' => request()->routeIs('transaksi-keluar.*'),
+                'icon' => 'fas fa-file-invoice-dollar',
+                'is_dropdown' => true,
+                'items' => [
+                    [
+                        'label' => 'Transaksi Baru',
+                        'route' => 'transaksi-keluar.create'
+                    ],
+                    [
+                        'label' => 'Data Transaksi',
+                        'route' => 'transaksi-keluar.index'
                     ],
                 ]
             ],

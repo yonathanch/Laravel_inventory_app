@@ -2,26 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\KartuStok;
 use App\Models\Transaksi;
 use App\Models\VarianProduk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use GrahamCampbell\ResultType\Success;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Requests\storeTransaksiMasukRequest;
-use App\Models\LaporanKenaikanHarga;
-use Illuminate\Auth\Events\Validated;
+use App\Http\Requests\storeTransaksiKeluarRequest;
 
-class TransaksiMasukController extends Controller
+class TransaksiKeluarController extends Controller
 {
-    public $pageTitle = 'Transaksi Masuk';
-    public $jenisTransaksi = 'pemasukan';
+    public $pageTitle = 'Transaksi Keluar';
+    public $jenisTransaksi = 'pengeluaran';
 
     public function index()
     {
-        $pengirim = request()->query('pengirim');
+        $penerima = request()->query('penerima');
         $tanggalAwal = request()->query('tanggal_awal');
         $tanggalAkhir = request()->query('tanggal_akhir');
         $perPage = request()->query('perPage', 10);
@@ -30,8 +27,8 @@ class TransaksiMasukController extends Controller
         $query->orderBy('created_at', 'Desc');
         $query->where('jenis_transaksi', $this->jenisTransaksi);
 
-        if ($pengirim) {
-            $query->where('pengirim', 'like', '%' . $pengirim . '%');
+        if ($penerima) {
+            $query->where('penerima', 'like', '%' . $penerima . '%');
         }
 
         if ($tanggalAwal && $tanggalAkhir) {
@@ -44,13 +41,13 @@ class TransaksiMasukController extends Controller
 
 
         $pageTitle = $this->pageTitle;
-        return view('transaksi-masuk.index', compact('pageTitle', 'transaksi'));
+        return view('transaksi-keluar.index', compact('pageTitle', 'transaksi'));
     }
 
     public function create() 
     {
         $pageTitle = $this->pageTitle;
-        return view('transaksi-masuk.create', compact('pageTitle'));
+        return view('transaksi-keluar.create', compact('pageTitle'));
     }
 
     public function show($nomor_transaksi)
@@ -58,10 +55,10 @@ class TransaksiMasukController extends Controller
         $pageTitle = "Detail" . $this->pageTitle;
         $transaksi = Transaksi::with('items')->where('nomor_transaksi', $nomor_transaksi)->first();
         $transaksi->formated_date = Carbon::parse($transaksi->created_at)->locale('id')->translatedFormat('l, d F Y');
-        return view('transaksi-masuk.show', compact('transaksi', 'pageTitle'));
+        return view('transaksi-keluar.show', compact('transaksi', 'pageTitle'));
     }
 
-    public function store(storeTransaksiMasukRequest $request)
+    public function store(storeTransaksiKeluarRequest $request)
     {
         $validator = Validator::make($request->all(), $request->rules(), $request->messages());
         if ($validator->fails()) {
@@ -79,10 +76,11 @@ class TransaksiMasukController extends Controller
             'nomor_transaksi' => $nomorTransaksi,
             'jenis_transaksi' => $this->jenisTransaksi,
             'jumlah_barang' => count($items),
-            'total_harga' => array_sum(array_column($items, 'subTotal')),
+            //berbeda dg transaksi masuk total harga kita ambil dari controller bkn blade (subTotal) agar tidak dimanipulasi yaitu dg set total harga transaksi 0
+            'total_harga' => 0,
             'keterangan' => $request->keterangan,
             'petugas' => Auth::user()->name,
-            'pengirim' => $request->pengirim,
+            'penerima' => $request->penerima,
             'kontak' => $request->kontak,
         ]);
 
@@ -91,45 +89,35 @@ class TransaksiMasukController extends Controller
             $query = explode('-', $item['text']);
             $varian = VarianProduk::where('nomor_sku', $item['nomor_sku'])->first();
 
-            if ($item['harga'] > $varian->harga_varian) {
-                LaporanKenaikanHarga::create([
-                    'nomor_transaksi' => $nomorTransaksi,
-                    'nomor_batch'     => $item['nomor_batch'],
-                    'nomor_sku'       => $item['nomor_sku'],
-                    'harga_lama'      => $varian->harga_varian,
-                    'harga_beli'      => $item['harga'],
-                    'kenaikan_harga'  => $item['harga'] - $varian->harga_varian,
-                    'jumlah_barang'   => $item['qty'],
-                ]);
-            }
-        
-        
-
             $transaksi->items()->create([
                 'transaksi_id' => $transaksi->id,
                 'produk' => $query[0],
                 'varian' => $query[1],
-                'nomor_batch' => $item['nomor_batch'],
                 'qty' => $item['qty'],
-                'harga' => $item['harga'],
-                'sub_total' => $item['subTotal'],
+                //lanjutan total_harga disini harga diambil dari varian bukan frontendnya dan sub_total diambil dari varian->harga varian dikali jumlah qty
+                'harga' => $varian->harga_varian,
+                'sub_total' => $varian->harga_varian * $item['qty'],
                 'nomor_sku' => $item['nomor_sku'],
             ]);
-          $varian->increment('stok_varian', $item['qty']);
+          $varian->decrement('stok_varian', $item['qty']);
           KartuStok::create([
             'nomor_transaksi' => $nomorTransaksi,
-            'jenis_transaksi' => 'in',
+            'jenis_transaksi' => 'out',
             'nomor_sku' => $item['nomor_sku'],
-            'jumlah_masuk' => $item['qty'],
+            'jumlah_keluar' => $item['qty'],
             'stok_akhir' => $varian->stok_varian,
             'petugas' => Auth::user()->name,
           ]);
+
+          //lanjutan total harga kita set transaksi total_harga adlah hasil perjumlahan dari varian->harga_varian dikali item qty
+          $transaksi->total_harga += $varian->harga_varian * $item['qty'];
+          $transaksi->save();
         }
 
         toast()->success('Transaksi masuk berhasil ditambahkan');
         return response()->json([
             'success' =>true,
-            'redirect_url' => route('transaksi-masuk.create'),
+            'redirect_url' => route('transaksi-keluar.create'),
         ]);
     }
 }

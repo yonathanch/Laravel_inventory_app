@@ -9,6 +9,7 @@ use App\Http\Controllers\VarianProdukController;
 use App\Http\Controllers\KategoriProdukController;
 use App\Http\Controllers\LaporanKenaikaHargaController;
 use App\Http\Controllers\StokBarangController;
+use App\Http\Controllers\TransaksiKeluarController;
 use App\Http\Controllers\TransaksiMasukController;
 use Faker\Guesser\Name;
 
@@ -41,5 +42,6 @@ Route::middleware('auth')->group(function(){
 
     Route::get('/kartu-stok/{nomor_sku}', [KartuStokController::class, 'kartuStok'])->name('kartu-stok');
     Route::resource('transaksi-masuk', TransaksiMasukController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('transaksi-keluar', TransaksiKeluarController::class)->only(['index', 'create', 'store', 'show']);
     
 }); 
