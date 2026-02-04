@@ -14,3 +14,5 @@ kenapa transaksi keluar total harga harus diambil dsari database? bkn fornt end:
 -karena Harga jual harus konsisten
 -Tidak boleh dipengaruhi user
 -Frontend hanya display
+
+nomor sku = kode barang, nomor_transaksi = nomor struk

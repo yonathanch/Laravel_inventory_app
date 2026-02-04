@@ -12,4 +12,10 @@ class TransaksiItems extends Model
     {
         return $this->belongsTo(Transaksi::class, 'transaksi_id');
     }
+
+    //bikin relasi dg varian dan ambil berdasarkan nomor sku = kode barang, nomor_transaksi = nomor struk
+    public function varian()
+    {
+        return $this->belongsTo(VarianProduk::class, 'nomor_sku', 'nomor_sku');
+    }
 }

@@ -78,6 +78,23 @@ class Sidebar extends Component
                 ]
             ],
             [
+                'label' => 'Transaksi Retur',
+                'route' => '#',
+                'is_active' => request()->routeIs('transaksi-retur.*'),
+                'icon' => 'fas fa-undo',
+                'is_dropdown' => true,
+                'items' => [
+                    [
+                        'label' => 'Transaksi Baru',
+                        'route' => 'transaksi-retur.create'
+                    ],
+                    [
+                        'label' => 'Data Transaksi',
+                        'route' => 'transaksi-retur.index'
+                    ],
+                ]
+            ],
+            [
                 'label' => 'Laporan Kenaikan Harga',
                 'route' => 'laporan-kenaikan-harga.index',
                 'is_active' => request()->routeIs('laporan-kenaikan-harga.*'),

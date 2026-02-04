@@ -11,6 +11,7 @@ use App\Http\Controllers\LaporanKenaikaHargaController;
 use App\Http\Controllers\StokBarangController;
 use App\Http\Controllers\TransaksiKeluarController;
 use App\Http\Controllers\TransaksiMasukController;
+use App\Http\Controllers\TransaksiReturController;
 use Faker\Guesser\Name;
 
 Route::get('/', function () {
@@ -25,8 +26,12 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 // master-data.kategori-produk.index
 
 Route::middleware('auth')->group(function(){
+    //route get data ajax
     Route::prefix('get-data')->name('get-data.')->group(function(){
         Route::get('/varian-produk', [VarianProdukController::class, 'getAllVarianJson'])->name('varian-produk');
+        //transaksi keluar untuk data transaksi return
+        Route::get('/transaksi-keluar', [TransaksiKeluarController::class, 'getTransaksiKeluar'])->name('transaksi-keluar');
+        Route::get('/transaksi-keluar/{nomor_transaksi}', [TransaksiKeluarController::class, 'getTransaksiKeluarItems'])->name('transaksi-keluar-items');
     });
 
     Route::post('export-laporan-transaksi', [ExportLaporanTransaksiController::class, 'exportLaporanTransaksi'])->name('export-laporan-transaksi');
@@ -43,5 +48,6 @@ Route::middleware('auth')->group(function(){
     Route::get('/kartu-stok/{nomor_sku}', [KartuStokController::class, 'kartuStok'])->name('kartu-stok');
     Route::resource('transaksi-masuk', TransaksiMasukController::class)->only(['index', 'create', 'store', 'show']);
     Route::resource('transaksi-keluar', TransaksiKeluarController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('transaksi-retur', TransaksiReturController::class)->only(['index', 'create', 'store', 'show']);
     
 }); 
