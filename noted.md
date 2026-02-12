@@ -16,3 +16,5 @@ kenapa transaksi keluar total harga harus diambil dsari database? bkn fornt end:
 -Frontend hanya display
 
 nomor sku = kode barang, nomor_transaksi = nomor struk
+
+Urutan crud ajax :kita bikin frontend dan masukan ke data controller

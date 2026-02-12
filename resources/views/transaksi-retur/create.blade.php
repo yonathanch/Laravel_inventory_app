@@ -306,16 +306,46 @@
             renderTable();
 
 
-            //untuk mereset ketika nomor transaksi ditekan x/close maka semua data ter clear
-            // $("#select-transaksi").on("select2:clear", function() {
-            //     $("#table-items tbody").html("");
-            //     $("#nomor_transaksi").html("");
-            //     $("#tanggal").html("");
-            //     $("#pengirim").html("");
-            //     $("#kontak").html("");
-            //     $("#jumlah_barang").html("");
-            //     $("#total_harga").html("");
-            // });
+            // untuk mereset ketika nomor transaksi ditekan x/close maka semua data ter clear
+            $("#select-transaksi").on("select2:clear", function() {
+                $("#table-items tbody").html("");
+                $("#nomor_transaksi").html("");
+                $("#tanggal").html("");
+                $("#pengirim").html("");
+                $("#kontak").html("");
+                $("#jumlah_barang").html("");
+                $("#total_harga").html("");
+            });
+
+            $("#btn-submit-retur").on("click", function() {
+                let nomor_transaksi = $("#nomor_transaksi").html();
+
+                if (returItems.length < 1) {
+                    swal({
+                        icon: 'warning',
+                        title: 'Perhatian',
+                        text: 'Tidak ada data yang di retur',
+                        timer: 3000
+                    })
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('transaksi-retur.store') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        nomor_transaksi: nomor_transaksi,
+                        items: returItems,
+                    },
+
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = response.redirect_url;
+                        }
+                    }
+                });
+            });
 
 
         });
