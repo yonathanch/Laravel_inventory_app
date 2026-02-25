@@ -1,0 +1,59 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn {{ $id ? 'btn-secondary btn-icon' : 'btn-dark btn-round' }}" data-bs-toggle="modal"
+    data-bs-target="#formPeriode{{ $id ?? '' }}">
+    @if ($id)
+        <i class="fas fa-edit"></i>
+    @else
+        <span>Buat Periode</span>
+    @endif
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="formPeriode{{ $id ?? '' }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="formPeriodeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" action="{{ $action }}" method="POST">
+            @csrf
+            @if ($id)
+                @method('PUT')
+            @endif
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="formPeriodeLabel">Form Periode Stok Opname</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="tangga_mulai" class="form-label">Tanggal Mulai</label>
+                    <input type="date" id="tanggal_mulai" name="tanggal_mulai" class="form-control"
+                        value="{{ old('tanggal_mulai', $tanggal_mulai ?? '') }}">
+                    @error('tanggal_mulai')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <label for="tanggal_selesai" class="form-label">Tanggal Selesai</label>
+                    <input type="date" id="tanggal_selesai" name="tanggal_selesai" class="form-control"
+                        value="{{ old('tanggal_selesai', $tanggal_selesai ?? '') }}">
+                    @error('tanggal_selesai')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+                <div class="form-group d-flex flex-column">
+                    <label for="is_active" class="form-label">
+                        <input type="checkbox" id="is_active" name="is_active" value="1"
+                            {{ old('is_active', $is_active ?? 0) == 1 ? 'checked' : '' }}>
+                        Aktifkan Langsung
+                    </label>
+                    <small class="mt-1 text-muted">
+                        Note:
+                        {{ $id ? 'Jika tidak diaktifkan maka tidak dapat melakukan pencatatan stok opname' : 'Pastikan periode sebelumnya sudah selesai sebelum mengaktifkan periode ini' }}
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-secondary">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>

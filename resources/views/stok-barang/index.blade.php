@@ -23,9 +23,9 @@
                     </div>
                 </div>
 
-                <div class="col-md-3 mt-3 mt-md-0 d-flex justify-content-center align-items-center">
-                    tesasdasdadad
-                </div>
+                {{-- <div class="col-md-3 mt-3 mt-md-0 d-flex justify-content-center align-items-center">
+
+                </div> --}}
             </div>
 
             <table class="table mt-5">

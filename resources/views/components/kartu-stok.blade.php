@@ -2,12 +2,13 @@
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-default btn-kartu-stok text-primary" data-bs-toggle="modal"
-    data-bs-target="#kartuStokModal" data-nomor-sku="{{ $nomor_sku }}">
+    data-bs-target="#kartuStokModal-{{ $nomor_sku }}" data-nomor-sku="{{ $nomor_sku }}">
     Kartu Stok
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="kartuStokModal" tabindex="-1" aria-labelledby="kartuStokModalLabel" aria-hidden="true">
+<div class="modal fade" id="kartuStokModal-{{ $nomor_sku }}" tabindex="-1" aria-labelledby="kartuStokModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -15,6 +16,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <div>
+                    <x-form-export-laporan-kartu-stok nomorSku="{{ $nomor_sku }}" />
+                </div>
                 <table class="table" id="table-kartu-stok">
                     <thead>
                         <tr>
